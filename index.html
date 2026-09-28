@@ -1,15 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Loch Garage Van Hire | Check-in</title>
+  <style>
+    body {
+      background-color: #0b0f19;
+      color: #ffffff;
+      font-family: sans-serif;
+      padding: 20px 10px;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+    }
+    .wrapper {
+      width: 100%;
+      max-width: 450px;
+      background-color: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    header {
+      background-color: #030712;
+      padding: 20px;
+      border-bottom: 2px solid #1f2937;
+    }
+    .logo {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      color: #ffffff;
+    }
+    .sub {
+      font-size: 11px;
+      color: #f59e0b;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+    .form-box {
+      padding: 20px;
+    }
+    .input-row {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 6px;
+    }
+    input, textarea {
+      width: 100%;
+      background-color: #030712;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      padding: 12px;
+      color: #ffffff;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .upload-zone {
+      position: relative;
+      border: 2px dashed #374151;
+      background-color: #030712;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .upload-zone input[type="file"] {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .btn {
+      width: 100%;
+      background-color: #f59e0b;
+      color: #030712;
+      font-weight: bold;
+      font-size: 15px;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .hidden { display: none !important; }
+    .success { padding: 30px 20px; text-align: center; }
+    .checkmark { font-size: 40px; color: #10b981; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <header>
+      <div class="logo">🚐</div>
+      <span class="sub">Lanark Fleet Depot</span>
+      <h1>Loch Garage Van Hire</h1>
+    </header>
+
+    <!-- Success Container -->
+    <div id="successPanel" class="success hidden">
+      <div class="checkmark">✓</div>
+      <h2>Check-in Submitted!</h2>
+      <p style="color:#9ca3af; font-size:14px;">
+        Thank you, <strong id="confirmedName" style="color:#fff;"></strong>. Your documents for booking <strong id="confirmedBookingRef" style="color:#f59e0b;"></strong> have been filed securely.
+      </p>
+    </div>
+
+    <!-- Main Rental Form -->
+    <form id="checkinForm" class="form-box">
+      <div class="input-row">
+        <label>Booking Reference *</label>
+        <input type="text" id="bookingRef" required placeholder="e.g. LG-VANS-99" style="text-transform: uppercase;">
+      </div>
+      <div class="input-row">
+        <label>Primary Driver Full Name *</label>
+        <input type="text" id="fullName" required placeholder="As printed on licence">
+      </div>
+      <div class="input-row">
+        <label>Residential Address & Postcode *</label>
+        <textarea id="address" rows="3" required placeholder="Must match your utility bill address"></textarea>
+      </div>
+
+      <div style="margin-top:20px; border-top:1px solid #1f2937; padding-top:20px;">
+        <div class="upload-zone">
+          <input type="file" id="licenceInput" accept="image/*,application/pdf" required>
+          <div id="licenceEmpty">
+            <strong>🪪 Upload Driving Licence (Front)</strong>
+            <p style="font-size:11px; color:#4b5563; margin:4px 0 0 0;">Tap to snap photo or select file</p>
+          </div>
+          <div id="licenceFilled" class="hidden" style="color:#10b981; font-weight:bold;">✓ Licence Card Selected</div>
+        </div>
+
+        <div class="upload-zone">
+          <input type="file" id="proofInput" accept="image/*,application/pdf" required>
+          <div id="proofEmpty">
+            <strong>📄 Upload Utility Bill / Statement</strong>
+            <p style="font-size:11px; color:#4b5563; margin:4px 0 0 0;">Must be dated within last 90 days</p>
+          </div>
+          <div id="proofFilled" class="hidden" style="color:#10b981; font-weight:bold;">✓ Proof Document Selected</div>
+        </div>
+
+        <button type="submit" class="btn">Submit Pre-Arrival Check-in</button>
+      </div>
+    </form>
+  </div>
+
   <script>
-    // 1. Automatically pre-fill the form fields if they are sent in the website URL link
+    // Link Parameter Auto-fill Engine
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const refParam = urlParams.get('ref') || urlParams.get('bookingref');
       const nameParam = urlParams.get('name') || urlParams.get('fullname');
-      
       if (refParam) document.getElementById('bookingRef').value = refParam.toUpperCase();
       if (nameParam) document.getElementById('fullName').value = decodeURIComponent(nameParam);
     });
 
-    // 2. Change the appearance of the boxes to green when a file is selected
+    // File Selector Status Listeners
     document.getElementById('licenceInput').addEventListener('change', function() {
       if(this.files.length) {
         document.getElementById('licenceEmpty').classList.add('hidden');
@@ -23,28 +176,21 @@
       }
     });
 
-    // 3. Submits data directly to your free Google Drive/Sheet database
+    // Form Delivery Transmitter
     document.getElementById('checkinForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
-      const submitBtn = e.target.querySelector('.btn-submit');
+      const submitBtn = e.target.querySelector('.btn');
       submitBtn.textContent = "Uploading Documents... Please Wait...";
       submitBtn.disabled = true;
 
       const licenceFile = document.getElementById('licenceInput').files[0];
       const proofFile = document.getElementById('proofInput').files[0];
 
-      // Convert image files into text strings so Google Sheets can handle them safely
       const getBase64 = (file) => new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = () => {
-          resolve({
-            base64: reader.result.split(',')[1],
-            name: file.name,
-            type: file.type
-          });
-        };
+        reader.onload = () => resolve({ base64: reader.result.split(',')[1], name: file.name, type: file.type });
         reader.onerror = error => reject(error);
       });
 
@@ -57,22 +203,20 @@
           proofFile: files[1]
         };
 
-        // Linked to your live Google Script URL
         const GOOGLE_SCRIPT_URL = "https://google.com";
 
         fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
-          mode: 'no-cors', // Bypasses security restrictions cleanly on phones
+          mode: 'no-cors',
           body: JSON.stringify(payload)
         }).then(() => {
-          // Switch form out to reveal the success panel layout
           document.getElementById('checkinForm').classList.add('hidden');
           document.getElementById('confirmedName').textContent = payload.fullName;
           document.getElementById('confirmedBookingRef').textContent = payload.bookingRef;
           document.getElementById('successPanel').classList.remove('hidden');
           window.scrollTo(0, 0);
         }).catch(err => {
-          alert("Submission error, please try again or refresh the page.");
+          alert("Submission error, please try again.");
           submitBtn.textContent = "Submit Pre-Arrival Check-in";
           submitBtn.disabled = false;
         });
